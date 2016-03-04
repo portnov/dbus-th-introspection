@@ -6,6 +6,7 @@ dist/
 *.dyn_hs
 *.dyn_hi
 *.dyn_o
+*.swp
 test
 out
 dbus-introspect
