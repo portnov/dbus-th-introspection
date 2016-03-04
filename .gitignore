@@ -1,0 +1,11 @@
+.cabal-sandbox/
+cabal.sandbox.config
+dist/
+*.hi
+*.o
+*.dyn_hs
+*.dyn_hi
+*.dyn_o
+test
+out
+dbus-introspect
