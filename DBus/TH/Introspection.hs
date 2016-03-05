@@ -3,7 +3,9 @@ module DBus.TH.Introspection
   (
    module DBus.TH.Introspection.Types,
    module DBus.TH.Introspection.Output,
+   listNames,
    introspect,
+   getServiceObjects,
    dbusType2haskell,
    method2function
   ) where
@@ -20,6 +22,10 @@ import DBus.TH as TH
 import DBus.TH.Introspection.Types
 import DBus.TH.Introspection.Output
 
+interface "org.freedesktop.DBus" "/" "org.freedesktop.DBus" Nothing [
+    "ListNames" =:: Return ''ListStr
+  ]
+
 -- | Run DBus introspection on specified object
 introspect :: Client -> BusName -> ObjectPath -> IO I.Object
 introspect client service path = do
@@ -30,6 +36,14 @@ introspect client service path = do
 	case I.parseXML path xml of
 		Just info -> return info
 		Nothing -> error ("Invalid introspection XML: " ++ show xml)
+
+getServiceObjects :: Client -> BusName -> ObjectPath -> IO [I.Object]
+getServiceObjects dbus service path = do
+  ob <- introspect dbus service path
+  children <- forM (I.objectChildren ob) $ \child ->
+                  getServiceObjects dbus service (I.objectPath child)
+  return $ ob : concat children
+
 
 -- | Try to convert DBus type to Haskell type.
 -- Only some relatively simple types are supported as for now.
