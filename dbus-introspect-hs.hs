@@ -12,11 +12,11 @@ import DBus.TH as TH
 import DBus.TH.Introspection
 
 import System.Console.CmdArgs
-import System.Environment
+import System.IO
 
 data Options = Options {
     moduleName :: String,
-    outputFile :: Maybe String,
+    outputFile :: String,
     system :: Bool,
     serviceName :: String,
     objectPath :: String,
@@ -27,7 +27,7 @@ data Options = Options {
 
 options = Options {
     moduleName = "Interface" &= typ "NAME" &= name "module" &= help "Haskell module name",
-    outputFile = def &= typFile &= name "output" &= help "Output file",
+    outputFile = "-" &= typFile &= name "output" &= help "Output file",
     system = False &= help "Use system bus instead of sesion bus",
     serviceName = def &= typ "SERVICE.NAME" &= argPos 0 &= opt ("" :: String),
     objectPath = def &= typ "/PATH/TO/OBJECT" &= argPos 1 &= opt ("" :: String),
@@ -37,6 +37,10 @@ options = Options {
   help "Introspect specified DBus object/interface and generate TemplateHaskell source for calling all functions from Haskell" &=
   program "dbus-introspect-hs" &= 
   summary "dbus-introspect-hs program"
+
+withOutFile :: FilePath -> (Handle -> IO a) -> IO a
+withOutFile "-" fn = fn stdout
+withOutFile path fn = withFile path WriteMode fn
 
 main :: IO ()
 main = do
@@ -52,33 +56,34 @@ main = do
                        Just list -> return $ map busName_ list
                 else return [busName_ $ serviceName opts]
 
-  putStrLn $ header (moduleName opts)
+  withOutFile (outputFile opts) $ \h -> do
+    hPutStrLn h $ header (moduleName opts)
 
-  forM_ services $ \service -> do
-    putStrLn $ "-- Service " ++ show service
-    objects <- if objectPath opts == ""
-                 then do
-                      obs <- getServiceObjects dbus service "/"
-                      return $ map I.objectPath obs
-                 else return [objectPath_ $ objectPath opts]
-    forM_ objects $ \object -> do
-      ob <- introspect dbus service object
-      forM_ (I.objectInterfaces ob) $ \iface -> do
-        let ifaceName = formatInterfaceName (I.interfaceName iface)
-            useIface = case interfaceName opts of
-                         "" -> True
-                         name -> name == ifaceName
-        when useIface $ do
-            putStrLn $ "-- Interface " ++ ifaceName
-            funcs <- forM (I.interfaceMethods iface) $ \m -> do
-                       -- putStrLn $ "    -- Method: " ++ 
-                       let methodName = formatMemberName (I.methodName m)
-                       case method2function m of
-                         Left err -> do
-                                     return [ "-- Error: method " ++  methodName ++ ": " ++ err ]
-                         Right fn -> return [ pprintFunc fn ]
-            let path = if dynamicObject opts 
-                         then Nothing
-                         else Just (formatObjectPath object)
-            putStrLn $ pprintInterface (serviceName opts) path ifaceName (concat funcs)
+    forM_ services $ \service -> do
+      hPutStrLn h $ "-- Service " ++ formatBusName service
+      objects <- if objectPath opts == ""
+                   then do
+                        obs <- getServiceObjects dbus service "/"
+                        return $ map I.objectPath obs
+                   else return [objectPath_ $ objectPath opts]
+      forM_ objects $ \object -> do
+        ob <- introspect dbus service object
+        forM_ (I.objectInterfaces ob) $ \iface -> do
+          let ifaceName = formatInterfaceName (I.interfaceName iface)
+              useIface = case interfaceName opts of
+                           "" -> True
+                           name -> name == ifaceName
+          when useIface $ do
+              hPutStrLn h $ "-- Interface " ++ ifaceName
+              funcs <- forM (I.interfaceMethods iface) $ \m -> do
+                         -- hPutStrLn h $ "    -- Method: " ++ 
+                         let methodName = formatMemberName (I.methodName m)
+                         case method2function m of
+                           Left err -> do
+                                       return [ "-- Error: method " ++  methodName ++ ": " ++ err ]
+                           Right fn -> return [ pprintFunc fn ]
+              let path = if dynamicObject opts 
+                           then Nothing
+                           else Just (formatObjectPath object)
+              hPutStrLn h $ pprintInterface (formatBusName service) path ifaceName (concat funcs)
 
