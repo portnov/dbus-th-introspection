@@ -3,8 +3,10 @@
 
 name:                dbus-th-introspection
 version:             0.1.0.0
-synopsis:            Library and program to automatically generate declarations for DBus calls by using DBus introspection and dbus-th.
--- description:         
+synopsis:            Generate bindings for DBus calls by using DBus introspection and dbus-th
+description:         This package is aimed to simplify writing bindings for DBus interfaces by using
+                     DBus introspection and dbus-th package.
+extra-doc-files:     README
 license:             BSD3
 license-file:        LICENSE
 author:              Ilya Portnov
@@ -41,3 +43,8 @@ executable dbus-introspect-hs
                        containers >=0.5 && <0.6,
                        cmdargs
   default-language:    Haskell2010
+
+Source-repository head
+  type:     git
+  location: https://github.com/portnov/dbus-th-introspection.git
+
