@@ -37,7 +37,12 @@ introspect client service path = do
 		Just info -> return info
 		Nothing -> error ("Invalid introspection XML: " ++ show xml)
 
-getServiceObjects :: Client -> BusName -> ObjectPath -> IO [I.Object]
+-- | Obtain list of all objects exported by given interface, starting
+-- with specified path.
+getServiceObjects :: Client        -- ^ DBus connection
+                  -> BusName       -- ^ Service name
+                  -> ObjectPath    -- ^ Object path to start with. For example, \"/\".
+                  -> IO [I.Object]
 getServiceObjects dbus service path = do
   ob <- introspect dbus service path
   children <- forM (I.objectChildren ob) $ \child ->
