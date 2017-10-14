@@ -68,6 +68,7 @@ dbusType2haskell (TypeArray TypeInt16) = return ''ListInt16
 dbusType2haskell (TypeArray TypeInt32) = return ''ListInt32
 dbusType2haskell (TypeArray TypeString) = return ''ListStr
 dbusType2haskell (TypeDictionary TypeString TypeString) = return ''DictStrStr
+dbusType2haskell (TypeDictionary TypeString TypeVariant) = return ''DictStrVariant
 dbusType2haskell t = Left $ "Unsupported type " ++ show t
 
 -- | Try to convert DBus.Introspection method description into DBus.TH description.
