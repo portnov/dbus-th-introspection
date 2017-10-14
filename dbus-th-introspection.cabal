@@ -15,7 +15,7 @@ maintainer:          portnov84@rambler.ru
 category:            Development
 build-type:          Simple
 -- extra-source-files:  
-cabal-version:       >=1.10
+cabal-version:       >=1.18
 
 library
   exposed-modules:     DBus.TH.Introspection,
