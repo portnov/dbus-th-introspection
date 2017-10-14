@@ -1,16 +1,10 @@
 
 module DBus.TH.Introspection.Output where
 
-import Control.Monad
 import Data.List
 import Language.Haskell.TH
 
-import DBus
-import DBus.Client
-import qualified DBus.Introspection as I
 import DBus.TH as TH
-
-import DBus.TH.Introspection.Types
 
 -- | Gernerate DBus function declaration
 pprintFunc :: TH.Function -> String
