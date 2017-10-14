@@ -29,13 +29,13 @@ interface "org.freedesktop.DBus" "/" "org.freedesktop.DBus" Nothing [
 -- | Run DBus introspection on specified object
 introspect :: Client -> BusName -> ObjectPath -> IO I.Object
 introspect client service path = do
-	reply <- call_ client (methodCall path "org.freedesktop.DBus.Introspectable" "Introspect")
-		{ methodCallDestination = Just service
-		}
-	let Just xml = fromVariant (methodReturnBody reply !! 0)
-	case I.parseXML path xml of
-		Just info -> return info
-		Nothing -> error ("Invalid introspection XML: " ++ show xml)
+    reply <- call_ client (methodCall path "org.freedesktop.DBus.Introspectable" "Introspect")
+        { methodCallDestination = Just service
+        }
+    let Just xml = fromVariant (methodReturnBody reply !! 0)
+    case I.parseXML path xml of
+        Just info -> return info
+        Nothing -> error ("Invalid introspection XML: " ++ show xml)
 
 -- | Obtain list of all objects exported by given interface, starting
 -- with specified path.
