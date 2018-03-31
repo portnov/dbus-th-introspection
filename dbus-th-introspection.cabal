@@ -2,7 +2,7 @@
 -- further documentation, see http://haskell.org/cabal/users-guide/
 
 name:                dbus-th-introspection
-version:             0.1.0.2
+version:             0.1.2.0
 synopsis:            Generate bindings for DBus calls by using DBus introspection and dbus-th
 description:         This package is aimed to simplify writing bindings for DBus interfaces by using
                      DBus introspection and dbus-th package.
