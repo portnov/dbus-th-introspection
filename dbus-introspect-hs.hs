@@ -5,9 +5,9 @@ import Data.List
 import Language.Haskell.TH
 
 import DBus
-import DBus.Client
+import DBus.Client hiding (interfaceName)
 import qualified DBus.Introspection as I
-import DBus.TH as TH
+import DBus.TH.EDSL as TH
 
 import DBus.TH.Introspection
 

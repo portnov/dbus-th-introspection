@@ -31,6 +31,10 @@ resolver: lts-11.2
 # will not be run. This is useful for tweaking upstream packages.
 packages: 
   - '.'
+  - location:
+      git: https://github.com/portnov/dbus-th.git
+      commit: cfb7ba6c696ea764df4ed482fc216160f2acead8
+    extra-dep: true
 # The following packages have been ignored due to incompatibility with the
 # resolver compiler, dependency conflicts with other packages
 # or unsatisfied dependencies.
@@ -39,7 +43,7 @@ packages:
 # Dependency packages to be pulled from upstream that are not in the resolver
 # (e.g., acme-missiles-0.3)
 extra-deps: 
-  - dbus-th-0.1.2.0
+  - dbus-1.0.1
 
 # Override default flag values for local packages and extra-deps
 flags: {}

@@ -17,7 +17,7 @@ import Language.Haskell.TH
 import DBus
 import DBus.Client
 import qualified DBus.Introspection as I
-import DBus.TH as TH
+import DBus.TH.EDSL as TH
 
 import DBus.TH.Introspection.Types
 import DBus.TH.Introspection.Output
@@ -81,7 +81,7 @@ method2function m = do
 
     toSignature :: [I.MethodArg] -> Either String TH.Signature
     toSignature args = do
-      let (inArgs, outArgs) = partition (\a -> I.methodArgDirection a == I.directionIn) args
+      let (inArgs, outArgs) = partition (\a -> I.methodArgDirection a == I.In) args
       if length outArgs > 1
         then Left $ "Method " ++ name ++ " has more than one out parameter"
         else do

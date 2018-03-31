@@ -4,7 +4,7 @@ module DBus.TH.Introspection.Output where
 import Data.List
 import Language.Haskell.TH
 
-import DBus.TH as TH
+import DBus.TH.EDSL as TH
 
 -- | Gernerate DBus function declaration
 pprintFunc :: TH.Function -> String
